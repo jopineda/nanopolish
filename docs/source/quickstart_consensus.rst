@@ -49,9 +49,6 @@ Analysis workflow
 The pipeline below describes the recommended analysis workflow for larger datasets. In this tutorial, we will run through the basic steps of the pipeline for this smaller (2kb) dataset.
 
 .. figure:: _static/nanopolish-workflow.png
-  :scale: 90%
-  :height: 1608px
-  :width: 2610px
   :alt: nanopolish-tutorial-workflow
 
 Data preprocessing
