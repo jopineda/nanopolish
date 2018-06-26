@@ -3,17 +3,16 @@
 Quickstart - calling methylation with nanopolish
 =====================================================
 
-As Oxford Nanopore sequencers are sensitive to base modifications it is useful to quantify the strength of their effect. Here we provide a step-by-step tutorial to help you get started with our `call-methylation` module that predicts genomic bases that may be methylated using signal-level information.
+Oxford Nanopore sequencers are sensitive to base modifications. Here we provide a step-by-step tutorial to help you get started with detecting base modifications using nanopolish.
 
+**For more information about our approach:**
 
-**For more information about call-methylation:**
-
-* Simpson, Jared T., et al. `"Detecting DNA cytosine methylation using nanopore sequencing." <https://www.nature.com/articles/nmeth.4184>`_ nature methods (2017). 
+* Simpson, Jared T., et al. `"Detecting DNA cytosine methylation using nanopore sequencing." <https://www.nature.com/articles/nmeth.4184>`_ Nature Methods (2017). 
 
 **Requirements**:
 
 * `nanopolish v0.8.4 <installation.html>`_
-* `samtools v1.2 <http://samtools.sourceforge.net/>`_
+* `samtools v1.2 <https://htslib.org>`_
 * `minimap2 <https://github.com/lh3/minimap2>`_
 
 Download example dataset
@@ -71,16 +70,17 @@ Now we're ready to use nanopolish to detect methylated bases (in this case 5-met
 
 The output file contains a lot of information including the position of the CG dinucleotide on the reference genome, the ID of the read that was used to make the call, and the log-likelihood ratio calculated by our model: ::
 
-    chromosome    start    end    read_name    log_lik_ratio    log_lik_methylated    log_lik_unmethylated    num_calling_strands    num_cpgs    sequence
-    chr20    4980553    4980553    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    3.70    -167.47    -171.17    1    1    TGAGACGGGGT
-    chr20    4980599    4980599    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    2.64    -98.87    -101.51    1    1    AATCTCGGCTC
-    chr20    4980616    4980616    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    -0.61    -95.35    -94.75    1    1    ACCTCCGCCTC
-    chr20    4980690    4980690    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    -2.99    -99.58    -96.59    1    1    ACACCCGGCTA
-    chr20    4980780    4980780    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    5.27    -135.45    -140.72    1    1    CACCTCGGCCT
-    chr20    4980807    4980807    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    -2.95    -89.20    -86.26    1    1    ATTACCGGTGT
-    chr20    4980820    4980822    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    7.47    -90.63    -98.10    1    2    GCCACCGCGCCCA
-    chr20    4980899    4980901    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    3.17    -96.40    -99.57    1    2    GTATACGCGTTCC
-    chr20    4980955    4980955    c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a    0.33    -92.14    -92.47    1    1    AGTCCCGATAT
+	chromosome  start    end      read_name                             log_lik_ratio  log_lik_methylated  log_lik_unmethylated  num_calling_strands  num_cpgs  sequence
+	chr20       4980553  4980553  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  3.70           -167.47             -171.17               1                    1         TGAGACGGGGT
+	chr20       4980599  4980599  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  2.64           -98.87              -101.51               1                    1         AATCTCGGCTC
+	chr20       4980616  4980616  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  -0.61          -95.35              -94.75                1                    1         ACCTCCGCCTC
+	chr20       4980690  4980690  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  -2.99          -99.58              -96.59                1                    1         ACACCCGGCTA
+	chr20       4980780  4980780  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  5.27           -135.45             -140.72               1                    1         CACCTCGGCCT
+	chr20       4980807  4980807  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  -2.95          -89.20              -86.26                1                    1         ATTACCGGTGT
+	chr20       4980820  4980822  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  7.47           -90.63              -98.10                1                    2         GCCACCGCGCCCA
+	chr20       4980899  4980901  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  3.17           -96.40              -99.57                1                    2         GTATACGCGTTCC
+	chr20       4980955  4980955  c1e202f4-e8f9-4eb8-b9a6-d79e6fab1e9a  0.33           -92.14              -92.47                1                    1         AGTCCCGATAT
+
 
 A positive value in the ``log_lik_ratio`` column indicates support for methylation. We have provided a helper script that can be used to calculate how often each reference position was methylated: ::
 
@@ -88,21 +88,21 @@ A positive value in the ``log_lik_ratio`` column indicates support for methylati
 
 The output is another tab-separated file, this time summarized by genomic position: ::
 
-    chromosome    start    end    num_cpgs_in_group    called_sites    called_sites_methylated    methylated_frequency    group_sequence
-    chr20    5036763    5036763    1    21    20    0.952    split-group
-    chr20    5036770	5036770    1    21    20    0.952    split-group
-    chr20    5036780    5036780    1    21    20    0.952    split-group
-    chr20    5037173    5037173    1    13    5     0.385    AAGGACGTTAT
+	chromosome  start    end      num_cpgs_in_group  called_sites  called_sites_methylated  methylated_frequency  group_sequence
+	chr20       5036763  5036763  1                  21            20                       0.952                 split-group
+	chr20       5036770  5036770  1                  21            20                       0.952                 split-group
+	chr20       5036780  5036780  1                  21            20                       0.952                 split-group
+	chr20       5037173  5037173  1                  13            5                        0.385                 AAGGACGTTAT
 
 In the example data set we have also included bisulfite data from ENCODE for the same region of chromosome 20. We can use the included ``compare_methylation.py`` helper script to do a quick comparison between the nanopolish methylation output and bisulfite: ::
 
-    python compare_methylation.py bisulfite.ENCFF835NTC.example.tsv methylation_frequency.tsv > nanopolish_vs_bisulfite.tsv
+    python compare_methylation.py bisulfite.ENCFF835NTC.example.tsv methylation_frequency.tsv > bisulfite_vs_nanopolish.tsv
 
 We can use R to visualize the results - we observe good correlation between the nanopolish methylation calls and bisulfite: ::
 
     library(ggplot2)
     library(RColorBrewer)
-    data <- read.table("nanopolish_vs_bisulfite.tsv", header=T)
+    data <- read.table("bisulfite_vs_nanopolish.tsv", header=T)
 
     # Set color palette for 2D heatmap
     rf <- colorRampPalette(rev(brewer.pal(11,'Spectral')))
@@ -116,6 +116,8 @@ We can use R to visualize the results - we observe good correlation between the 
         ylab("Nanopolish Methylation Frequency") +
         theme_bw(base_size=20) +
         ggtitle(title)
+
+Here's what the output should look like:
 
 .. figure:: _static/quickstart_methylation_results.png
   :scale: 80%
