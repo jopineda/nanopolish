@@ -50,6 +50,8 @@ The pipeline below describes the recommended analysis workflow for larger datase
 
 .. figure:: _static/nanopolish-workflow.png
   :scale: 90%
+  :height: 1608px
+  :width: 2610px
   :alt: nanopolish-tutorial-workflow
 
 Data preprocessing
